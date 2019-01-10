@@ -21,22 +21,14 @@ Several dependencies will need to be installed prior to running the test cases.
     pip install unittest2
     pip install pytest
     ```
-
-4. Install from source via [GitHub](https://github.com/appium/python-client).
-
-    ```shell
-    git clone git@github.com:appium/python-client.git
-    cd python-client
-    python setup.py install
-    ```
     
-5. [Todoist Python library](https://github.com/doist/todoist-python) for their implementation of the API calls.
+4. [Todoist Python library](https://github.com/doist/todoist-python) for their implementation of the API calls.
 
     ```shell
     pip install todoist-python
     ```
     
-6. Either a physical connected Android device (enable USB debugging) or an [Android emulator](https://developer.android.com/studio/run/emulator). The tests were written using the latter running the version 7.0.
+5. Either a physical connected Android device (enable USB debugging) or an [Android emulator](https://developer.android.com/studio/run/emulator). The tests were written using the latter running the version 7.0.
 
 ## Run tests
 
