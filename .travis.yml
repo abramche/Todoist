@@ -1,0 +1,53 @@
+language: android
+
+jdk:
+  - oraclejdk8
+
+sudo: true
+
+matrix:
+  include:
+    - language: python
+      python:
+        - 3.7.2
+      before_install:
+      - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+      - nvm install 8
+      - node --version
+      - npm --version
+      - npm install appium-test-support # get the travis emu scripts
+
+      - android list sdk --extended --no-ui --all
+      - android list targets
+      - $(npm bin)/android-emu-travis-pre
+
+      - npm install
+
+      - $(npm bin)/android-emu-travis-post
+      - sleep 30
+      - adb shell input keyevent 82 &
+      install:
+        - pip install Appium-Python-Client
+        - pip install unittest2
+        - pip install pytest
+        - pip install todoist-python
+      script:
+        - pytest
+
+android:
+  components:
+    - platform-tools
+    - tools
+    - build-tools-24.0.0
+    - android-24
+    - extra-android-m2repository
+    - extra-google-m2repository
+    - extra-android-support
+    - extra-google-google_play_services
+    - sys-img-armeabi-v7a-android-24
+
+notifications:
+  email: false
+
+install:
+  - true
