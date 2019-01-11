@@ -9,7 +9,7 @@ matrix:
   include:
     - language: python
       python:
-        - 3.7.2
+        - 3.6
       before_install:
       - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
       - nvm install 8
@@ -27,10 +27,7 @@ matrix:
       - sleep 30
       - adb shell input keyevent 82 &
       install:
-        - pip install Appium-Python-Client
-        - pip install unittest2
-        - pip install pytest
-        - pip install todoist-python
+        - pip install -r requirements.txt
       script:
         - pytest
 
