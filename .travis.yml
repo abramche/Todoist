@@ -37,6 +37,8 @@ before_install:
     - npm install appium-doctor
     - "./node_modules/.bin/appium-doctor"
     - "./node_modules/.bin/appium --log-level info > appium_log.txt &"
+    - mkdir "$ANDROID_HOME/licenses" || true
+    - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
     - sdkmanager tools
     - sdkmanager "system-images;android-24;default;armeabi-v7a"
     - echo no | avdmanager create avd --force -n emulatorApi24 -k "system-images;android-24;default;armeabi-v7a"
