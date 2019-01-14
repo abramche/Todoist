@@ -1,50 +1,53 @@
 language: android
-
-jdk:
-  - oraclejdk8
-
-sudo: true
-
-matrix:
-  include:
-    - language: python
-      python:
-        - 3.6
-      before_install:
-      - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
-      - nvm install 8
-      - node --version
-      - npm --version
-      - npm install appium-test-support # get the travis emu scripts
-
-      - android list sdk --extended --no-ui --all
-      - android list targets
-      - $(npm bin)/android-emu-travis-pre
-
-      - npm install
-
-      - $(npm bin)/android-emu-travis-post
-      - sleep 30
-      - adb shell input keyevent 82 &
-      install:
-        - pip install -r requirements.txt
-      script:
-        - pytest
+sudo: required
+jdk: oraclejdk8
 
 android:
-  components:
-    - platform-tools
-    - tools
-    - build-tools-24.0.0
-    - android-24
-    - extra-android-m2repository
-    - extra-google-m2repository
-    - extra-android-support
-    - extra-google-google_play_services
-    - sys-img-armeabi-v7a-android-24
+    components:
+        - tools
+        - platform-tools
+        - build-tools-26.0.2
+        - android-26
+        - android-24
+        - extra-google-google_play_services
+        - extra-google-m2repository
+        - extra-android-m2repository
+        - addon-google_apis-google-26
+        - sys-img-armeabi-v7a-android-24
+        -
+before_install:
+    - sudo apt-get update
 
-notifications:
-  email: false
+    - git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+    - echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+    - echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+    - echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
+    - git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+    - echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bash_profile
+    - source ~/.bash_profile
+    - pyenv install 3.6.1
+    - pyenv virtualenv 3.6.1 eugene
+    - pyenv activate eugene
+    - pip install -r requirements.txt
+    - curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+    - sudo apt-get install nodejs
+    - sudo apt-get install build-essential
+    - PATH=$PATH:$JAVA_HOME/bin
+    - npm install appium
+    - npm install appium-doctor
+    - "./node_modules/.bin/appium-doctor"
+    - "./node_modules/.bin/appium --log-level info > appium_log.txt &"
+    - sdkmanager tools
+    - sdkmanager "system-images;android-24;default;armeabi-v7a"
+    - echo no | avdmanager create avd --force -n emulatorApi24 -k "system-images;android-24;default;armeabi-v7a"
+    - $ANDROID_HOME/emulator/emulator -avd emulatorApi24 -no-audio -no-window &
 
-install:
-  - true
+before_script:
+    - android-wait-for-emulator
+    # Disable animations
+    - adb shell settings put global window_animation_scale 0 &
+    - adb shell settings put global transition_animation_scale 0 &
+    - adb shell settings put global animator_duration_scale 0 &
+    - adb shell input keyevent 82 &
+script:
+    - pytest
